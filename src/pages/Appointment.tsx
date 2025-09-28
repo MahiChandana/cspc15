@@ -26,11 +26,11 @@ const Appointment = () => {
   const { toast } = useToast();
 
   const hospitals = [
-    { name: "City General Hospital", location: "Downtown", distance: "2.5 km" },
-    { name: "Community Health Center", location: "North District", distance: "1.8 km" },
-    { name: "Primary Health Care Center", location: "East Zone", distance: "3.2 km" },
-    { name: "Government Medical College", location: "Central Area", distance: "4.1 km" },
-    { name: "District Hospital", location: "South Block", distance: "2.9 km" }
+    { name: "Government Hospital", location: "Pathapatnam, Andhra Pradesh", distance: "3.2 km", phone: "086722 22302" },
+    { name: "Doctor Veerendranath Hospital", location: "Buttaiahpeta, Machilipatnam", distance: "1.8 km", phone: "086722 22278" },
+    { name: "Vaishnavi Hospital", location: "Chinna Gandhi Bommi", distance: "2.1 km", phone: "0883 796 4513" },
+    { name: "Andhra Pradesh Government Hospital", location: "Tallapalem Road, Machilipatnam", distance: "2.7 km" },
+    { name: "Dr V Radha Krishna Murthy Hospital", location: "Shaik Imam Street, Machilipatnam", distance: "3.5 km", phone: "099498 46008" }
   ];
 
   const timeSlots = [
