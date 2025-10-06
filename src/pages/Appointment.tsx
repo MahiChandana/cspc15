@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,8 +13,10 @@ import { CalendarIcon, Clock, MapPin, Phone, User } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import Navigation from "@/components/ui/navigation";
 
 const Appointment = () => {
+  const navigate = useNavigate();
   const [date, setDate] = useState<Date>();
   const [formData, setFormData] = useState({
     name: "",
@@ -38,13 +42,48 @@ const Appointment = () => {
     "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date || !formData.name || !formData.hospital || !formData.timeSlot) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields to book your appointment.",
         variant: "destructive"
+      });
+      return;
+    }
+
+    // Check if user is logged in
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to book an appointment.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    // Save appointment to database
+    const selectedHospital = hospitals.find(h => h.name === formData.hospital);
+    
+    const { error } = await supabase.from("appointments").insert({
+      patient_id: session.user.id,
+      hospital_name: formData.hospital,
+      hospital_location: selectedHospital?.location || "",
+      appointment_date: date.toISOString().split('T')[0],
+      appointment_time: formData.timeSlot,
+      symptoms: formData.symptoms,
+      status: "pending",
+    });
+
+    if (error) {
+      toast({
+        title: "Booking Failed",
+        description: "There was an error booking your appointment. Please try again.",
+        variant: "destructive",
       });
       return;
     }
@@ -65,11 +104,15 @@ const Appointment = () => {
       timeSlot: ""
     });
     setDate(undefined);
+    
+    // Redirect to dashboard
+    navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-light/10 to-background pt-20 pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-primary-light/10 to-background">
+      <Navigation />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">

@@ -10,11 +10,11 @@ const Navigation = () => {
 
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Features", href: "/features" },
     { name: "Book Appointment", href: "/appointment" },
     { name: "Health Awareness", href: "/awareness" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
+    { name: "Login", href: "/auth" },
   ];
 
   const isActive = (href: string) => location.pathname === href;
